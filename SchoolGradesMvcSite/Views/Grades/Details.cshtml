@@ -1,3 +1,64 @@
 @model Grade
-@{ ViewData["Title"] = "Деталі оцінки"; }
-<div class="card shadow-sm"><div class="card-body"><h2>Деталі оцінки</h2><p><strong>Учень:</strong> @Model.Student?.FullName (@Model.Student?.ClassName)</p><p><strong>Предмет:</strong> @Model.Subject?.Name</p><p><strong>Вчитель:</strong> @Model.Teacher?.FullName</p><p><strong>Дата:</strong> @Model.DateAssigned.ToString("yyyy-MM-dd")</p><p><strong>Оцінка:</strong> @Model.Value</p><p><strong>Коментар:</strong> @Model.Comment</p><div class="d-flex gap-2"><a class="btn btn-outline-primary" asp-action="EditComment" asp-route-id="@Model.Id">Редагувати коментар</a><a class="btn btn-secondary" asp-action="Index">Назад</a></div></div></div>
+
+@{
+    ViewData["Title"] = "Деталі оцінки";
+}
+
+@if (TempData["Success"] is not null)
+{
+    <div class="alert alert-success">
+        @TempData["Success"]
+    </div>
+}
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <h2>Деталі оцінки</h2>
+
+        <p>
+            <strong>Учень:</strong> @Model.Student?.FullName (@Model.Student?.ClassName)
+        </p>
+
+        <p>
+            <strong>Предмет:</strong> @Model.Subject?.Name
+        </p>
+
+        <p>
+            <strong>Вчитель:</strong> @Model.Teacher?.FullName
+        </p>
+
+        <p>
+            <strong>Дата:</strong> @Model.DateAssigned.ToString("yyyy-MM-dd")
+        </p>
+
+        <p>
+            <strong>Оцінка:</strong> @Model.Value
+        </p>
+
+        <p>
+            <strong>Коментар:</strong>
+
+            @if (string.IsNullOrWhiteSpace(Model.Comment))
+            {
+                <span class="text-muted">Коментар ще не додано.</span>
+            }
+            else
+            {
+                <span>@Model.Comment</span>
+            }
+        </p>
+
+        <div class="d-flex gap-2">
+            <a class="btn btn-outline-primary"
+                   asp-action="EditComment"
+                   asp-route-id="@Model.Id">
+                Редагувати коментар
+            </a>
+
+            <a class="btn btn-secondary"
+                   asp-action="Index">
+                Назад
+            </a>
+        </div>
+    </div>
+</div>

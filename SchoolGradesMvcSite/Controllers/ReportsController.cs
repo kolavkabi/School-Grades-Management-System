@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using SchoolGradesMvcSite.Data;
 using SchoolGradesMvcSite.Infrastructure;
 using SchoolGradesMvcSite.ViewModels;
+using System.IO;
 using System.Text;
 
 namespace SchoolGradesMvcSite.Controllers;
@@ -21,15 +22,31 @@ public class ReportsController : Controller
 
     public async Task<IActionResult> Index()
     {
-        ViewBag.Students = new SelectList(await _context.Students.OrderBy(s => s.LastName).ToListAsync(), "Id", "FullName");
-        ViewBag.Classes = await _context.Students.Select(s => s.ClassName).Distinct().OrderBy(c => c).ToListAsync();
+        ViewBag.Students = new SelectList(
+            await _context.Students
+                .OrderBy(s => s.LastName)
+                .ToListAsync(),
+            "Id",
+            "FullName"
+        );
+
+        ViewBag.Classes = await _context.Students
+            .Select(s => s.ClassName)
+            .Distinct()
+            .OrderBy(c => c)
+            .ToListAsync();
+
         return View();
     }
 
     public async Task<IActionResult> StudentReport(int studentId)
     {
         var student = await _context.Students.FindAsync(studentId);
-        if (student is null) return NotFound();
+
+        if (student is null)
+        {
+            return NotFound();
+        }
 
         var grades = await _context.Grades
             .Include(g => g.Subject)
@@ -44,13 +61,14 @@ public class ReportsController : Controller
             Grades = grades,
             Average = grades.Any() ? Convert.ToDecimal(grades.Average(g => g.Value)) : 0
         };
+
         return View(vm);
     }
-
 
     public async Task<IActionResult> ExportStudentReportCsv(int studentId)
     {
         var student = await _context.Students.FindAsync(studentId);
+
         if (student is null)
         {
             return NotFound();
@@ -64,20 +82,40 @@ public class ReportsController : Controller
             .ToListAsync();
 
         var sb = new StringBuilder();
+
         sb.AppendLine("Student,Class,Subject,Teacher,Value,Date,Comment");
-        foreach (var g in grades)
+
+        foreach (var grade in grades)
         {
-            sb.AppendLine($"{Esc(student.FullName)},{Esc(student.ClassName)},{Esc(g.Subject?.Name ?? string.Empty)},{Esc(g.Teacher?.FullName ?? string.Empty)},{g.Value},{g.DateAssigned:yyyy-MM-dd},{Esc(g.Comment ?? string.Empty)}");
+            sb.AppendLine(
+                $"{Esc(student.FullName)}," +
+                $"{Esc(student.ClassName)}," +
+                $"{Esc(grade.Subject?.Name ?? string.Empty)}," +
+                $"{Esc(grade.Teacher?.FullName ?? string.Empty)}," +
+                $"{grade.Value}," +
+                $"{grade.DateAssigned:yyyy-MM-dd}," +
+                $"{Esc(grade.Comment ?? string.Empty)}"
+            );
         }
 
-        var safeLastName = student.LastName.Replace(' ', '_');
-        var fileName = $"student-report-{safeLastName}-{student.Id}.csv";
-        return File(Encoding.UTF8.GetBytes(sb.ToString()), "text/csv", fileName);
+        var safeLastName = MakeSafeFileName(student.LastName);
+        var currentDate = DateTime.Now.ToString("yyyyMMdd");
+
+        var fileName = $"student-report-{safeLastName}-{student.Id}-{currentDate}.csv";
+
+        var csvBytes = AddUtf8Bom(sb.ToString());
+
+        return File(csvBytes, "text/csv; charset=utf-8", fileName);
     }
 
     public async Task<IActionResult> TopStudentInClass(string className)
     {
-        ViewBag.Classes = await _context.Students.Select(s => s.ClassName).Distinct().OrderBy(c => c).ToListAsync();
+        ViewBag.Classes = await _context.Students
+            .Select(s => s.ClassName)
+            .Distinct()
+            .OrderBy(c => c)
+            .ToListAsync();
+
         ViewBag.ClassName = className;
 
         if (string.IsNullOrWhiteSpace(className))
@@ -143,16 +181,25 @@ public class ReportsController : Controller
             .ThenBy(x => x.StudentName)
             .ToList();
 
-        ViewBag.Classes = await _context.Students.Select(s => s.ClassName).Distinct().OrderBy(c => c).ToListAsync();
+        ViewBag.Classes = await _context.Students
+            .Select(s => s.ClassName)
+            .Distinct()
+            .OrderBy(c => c)
+            .ToListAsync();
+
         ViewBag.ClassName = className;
+
         return View(ranking);
     }
 
     public async Task<IActionResult> ClassStatistics(string? className)
     {
         var classQuery = _context.Students.AsQueryable();
+
         if (!string.IsNullOrWhiteSpace(className))
+        {
             classQuery = classQuery.Where(s => s.ClassName == className);
+        }
 
         var classes = await classQuery
             .Select(s => s.ClassName)
@@ -161,10 +208,18 @@ public class ReportsController : Controller
             .ToListAsync();
 
         var result = new List<ClassStatisticsViewModel>();
+
         foreach (var cls in classes)
         {
-            var studentIds = await _context.Students.Where(s => s.ClassName == cls).Select(s => s.Id).ToListAsync();
-            var grades = await _context.Grades.Where(g => studentIds.Contains(g.StudentId)).ToListAsync();
+            var studentIds = await _context.Students
+                .Where(s => s.ClassName == cls)
+                .Select(s => s.Id)
+                .ToListAsync();
+
+            var grades = await _context.Grades
+                .Where(g => studentIds.Contains(g.StudentId))
+                .ToListAsync();
+
             result.Add(new ClassStatisticsViewModel
             {
                 ClassName = cls,
@@ -174,8 +229,14 @@ public class ReportsController : Controller
             });
         }
 
-        ViewBag.Classes = await _context.Students.Select(s => s.ClassName).Distinct().OrderBy(c => c).ToListAsync();
+        ViewBag.Classes = await _context.Students
+            .Select(s => s.ClassName)
+            .Distinct()
+            .OrderBy(c => c)
+            .ToListAsync();
+
         ViewBag.ClassName = className;
+
         return View(result);
     }
 
@@ -189,13 +250,48 @@ public class ReportsController : Controller
             .ToListAsync();
 
         var sb = new StringBuilder();
+
         sb.AppendLine("Student,Class,Subject,Teacher,Value,Date,Comment");
-        foreach (var g in grades)
+
+        foreach (var grade in grades)
         {
-            sb.AppendLine($"{Esc(g.Student!.FullName)},{Esc(g.Student.ClassName)},{Esc(g.Subject!.Name)},{Esc(g.Teacher!.FullName)},{g.Value},{g.DateAssigned:yyyy-MM-dd},{Esc(g.Comment ?? string.Empty)}");
+            sb.AppendLine(
+                $"{Esc(grade.Student!.FullName)}," +
+                $"{Esc(grade.Student.ClassName)}," +
+                $"{Esc(grade.Subject!.Name)}," +
+                $"{Esc(grade.Teacher!.FullName)}," +
+                $"{grade.Value}," +
+                $"{grade.DateAssigned:yyyy-MM-dd}," +
+                $"{Esc(grade.Comment ?? string.Empty)}"
+            );
         }
-        return File(Encoding.UTF8.GetBytes(sb.ToString()), "text/csv", "grades-report.csv");
+
+        var csvBytes = AddUtf8Bom(sb.ToString());
+
+        return File(csvBytes, "text/csv; charset=utf-8", "grades-report.csv");
     }
 
-    private static string Esc(string value) => $"\"{value.Replace("\"", "\"\"")}\"";
+    private static string Esc(string value)
+    {
+        return $"\"{value.Replace("\"", "\"\"")}\"";
+    }
+
+    private static byte[] AddUtf8Bom(string text)
+    {
+        var preamble = Encoding.UTF8.GetPreamble();
+        var bytes = Encoding.UTF8.GetBytes(text);
+
+        return preamble.Concat(bytes).ToArray();
+    }
+
+    private static string MakeSafeFileName(string value)
+    {
+        var invalidChars = Path.GetInvalidFileNameChars();
+
+        var safe = new string(
+            value.Select(ch => invalidChars.Contains(ch) ? '_' : ch).ToArray()
+        );
+
+        return safe.Replace(' ', '_');
+    }
 }

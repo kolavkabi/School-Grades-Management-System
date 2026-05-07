@@ -1,0 +1,3 @@
+@model Subject
+@{ ViewData["Title"] = "Деталі предмета"; }
+<div class="card shadow-sm"><div class="card-body"><h2>@Model.Name</h2><p><strong>Опис:</strong> @Model.Description</p><p><strong>Годин на тиждень:</strong> @Model.WeeklyHours</p><p><strong>Статус:</strong> @(Model.IsActive ? "Активний" : "Неактивний")</p><h4>Закріплені вчителі</h4><ul>@foreach (var ts in Model.TeacherSubjects){<li>@ts.Teacher?.FullName</li>}</ul><a asp-action="Index" class="btn btn-secondary">Назад</a></div></div>

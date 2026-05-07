@@ -1,0 +1,25 @@
+@model GradeCommentViewModel
+@{ ViewData["Title"] = "Коментар до оцінки"; }
+<div class="card shadow-sm">
+    <div class="card-body">
+        <h2>Коментар до оцінки</h2>
+        <p class="mb-1"><strong>Учень:</strong> @Model.StudentName</p>
+        <p><strong>Предмет:</strong> @Model.SubjectName</p>
+        <form asp-action="EditComment" method="post">
+            @Html.AntiForgeryToken()
+            <input asp-for="GradeId" type="hidden" />
+            <input asp-for="StudentId" type="hidden" />
+            <input asp-for="StudentName" type="hidden" />
+            <input asp-for="SubjectName" type="hidden" />
+            <div class="mb-3">
+                <label asp-for="Comment" class="form-label"></label>
+                <textarea asp-for="Comment" class="form-control" rows="4" placeholder="Наприклад: добре виконав контрольну роботу"></textarea>
+                <span asp-validation-for="Comment" class="text-danger"></span>
+            </div>
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Зберегти коментар</button>
+                <a class="btn btn-secondary" asp-action="Details" asp-route-id="@Model.GradeId">Скасувати</a>
+            </div>
+        </form>
+    </div>
+</div>

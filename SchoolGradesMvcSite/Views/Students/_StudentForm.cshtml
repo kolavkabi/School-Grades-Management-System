@@ -1,0 +1,18 @@
+@model Student
+<div class="card shadow-sm">
+    <div class="card-body">
+        <h2>@ViewData["Title"]</h2>
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input asp-for="Id" type="hidden" />
+            <div class="row g-3">
+                <div class="col-md-6"><label asp-for="FirstName" class="form-label"></label><input asp-for="FirstName" class="form-control" /><span asp-validation-for="FirstName" class="text-danger"></span></div>
+                <div class="col-md-6"><label asp-for="LastName" class="form-label"></label><input asp-for="LastName" class="form-control" /><span asp-validation-for="LastName" class="text-danger"></span></div>
+                <div class="col-md-4"><label asp-for="ClassName" class="form-label"></label><input asp-for="ClassName" class="form-control" /><span asp-validation-for="ClassName" class="text-danger"></span></div>
+                <div class="col-md-4"><label asp-for="DateOfBirth" class="form-label"></label><input asp-for="DateOfBirth" class="form-control" /><span asp-validation-for="DateOfBirth" class="text-danger"></span></div>
+                <div class="col-md-4 d-flex align-items-end"><div class="form-check"><input asp-for="IsActive" class="form-check-input" /><label asp-for="IsActive" class="form-check-label"></label></div></div>
+            </div>
+            <div class="mt-4 d-flex gap-2"><button type="submit" class="btn btn-primary">Зберегти</button><a asp-action="Index" class="btn btn-secondary">Назад</a></div>
+        </form>
+    </div>
+</div>

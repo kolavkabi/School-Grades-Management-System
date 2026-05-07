@@ -1,0 +1,3 @@
+@model Subject
+@{ ViewData["Title"] = "Видалити предмет"; }
+<div class="card shadow-sm"><div class="card-body"><h2>Видалити предмет</h2><p>Видалити предмет <strong>@Model.Name</strong>?</p><form asp-action="Delete" method="post"><input type="hidden" asp-for="Id" /><button class="btn btn-danger" type="submit">Видалити</button> <a asp-action="Index" class="btn btn-secondary">Скасувати</a></form></div></div>

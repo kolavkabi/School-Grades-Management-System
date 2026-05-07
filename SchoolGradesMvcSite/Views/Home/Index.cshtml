@@ -1,0 +1,21 @@
+@{
+    ViewData["Title"] = "Головна";
+}
+
+<div class="p-4 p-md-5 mb-4 bg-light rounded-3 shadow-sm">
+    <div class="container-fluid py-3">
+        <h1 class="display-5 fw-bold">School Grades Management System</h1>
+        <p class="col-md-9 fs-5">Вебсайт для управління учнями, вчителями, предметами, оцінками, звітами та ролями доступу.</p>
+        @if (User.Identity?.IsAuthenticated != true)
+        {
+            <a class="btn btn-primary btn-lg" asp-controller="Account" asp-action="Login">Увійти в систему</a>
+        }
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-3"><div class="card stats-card"><div class="card-body"><h5>Учні</h5><div class="display-6">@ViewBag.StudentsCount</div></div></div></div>
+    <div class="col-md-3"><div class="card stats-card"><div class="card-body"><h5>Вчителі</h5><div class="display-6">@ViewBag.TeachersCount</div></div></div></div>
+    <div class="col-md-3"><div class="card stats-card"><div class="card-body"><h5>Предмети</h5><div class="display-6">@ViewBag.SubjectsCount</div></div></div></div>
+    <div class="col-md-3"><div class="card stats-card"><div class="card-body"><h5>Оцінки</h5><div class="display-6">@ViewBag.GradesCount</div></div></div></div>
+</div>

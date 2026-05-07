@@ -1,0 +1,3 @@
+@model Grade
+@{ ViewData["Title"] = "Видалити оцінку"; }
+<div class="card shadow-sm"><div class="card-body"><h2>Видалити оцінку</h2><p>Видалити оцінку <strong>@Model.Value</strong> для учня <strong>@Model.Student?.FullName</strong>?</p><form asp-action="Delete" method="post"><input type="hidden" asp-for="Id" /><button class="btn btn-danger" type="submit">Видалити</button> <a asp-action="Index" class="btn btn-secondary">Скасувати</a></form></div></div>

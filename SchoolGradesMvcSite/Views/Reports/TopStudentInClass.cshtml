@@ -1,0 +1,48 @@
+@model TopStudentInClassViewModel
+@{
+    ViewData["Title"] = "Найкращий учень класу";
+    var classes = ViewBag.Classes as IEnumerable<string> ?? Enumerable.Empty<string>();
+    string? currentClass = ViewBag.ClassName as string;
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Найкращий учень класу</h2>
+    <form method="get" class="d-flex gap-2">
+        <select name="className" class="form-select">
+            <option value="">Оберіть клас</option>
+            @foreach (var cls in classes)
+            {
+                if (currentClass == cls)
+                {
+                    <option value="@cls" selected>@cls</option>
+                }
+                else
+                {
+                    <option value="@cls">@cls</option>
+                }
+            }
+        </select>
+        <button class="btn btn-outline-primary">Показати</button>
+    </form>
+</div>
+
+@if (string.IsNullOrWhiteSpace(currentClass))
+{
+    <div class="alert alert-secondary">Оберіть клас, щоб побачити найкращого учня.</div>
+}
+else if (!Model.HasData)
+{
+    <div class="alert alert-warning">Для класу <strong>@currentClass</strong> ще немає оцінок.</div>
+}
+else
+{
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h3 class="mb-3">@Model.StudentName</h3>
+            <div class="row g-3">
+                <div class="col-md-4"><div class="border rounded p-3 h-100"><div class="text-muted">Клас</div><div class="fs-5 fw-semibold">@Model.ClassName</div></div></div>
+                <div class="col-md-4"><div class="border rounded p-3 h-100"><div class="text-muted">Середній бал</div><div class="fs-5 fw-semibold">@Model.Average.ToString("0.00")</div></div></div>
+                <div class="col-md-4"><div class="border rounded p-3 h-100"><div class="text-muted">Кількість оцінок</div><div class="fs-5 fw-semibold">@Model.GradesCount</div></div></div>
+            </div>
+        </div>
+    </div>
+}

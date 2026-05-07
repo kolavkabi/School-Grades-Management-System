@@ -1,0 +1,12 @@
+@model Student
+@{ ViewData["Title"] = "Профіль учня"; }
+<div class="card shadow-sm mb-3"><div class="card-body"><h2>@Model.FullName</h2><p><strong>Клас:</strong> @Model.ClassName</p><p><strong>Дата народження:</strong> @Model.DateOfBirth.ToString("yyyy-MM-dd")</p><p><strong>Статус:</strong> @(Model.IsActive ? "Активний" : "Неактивний")</p></div></div>
+<div class="card shadow-sm"><div class="card-body"><h4>Оцінки</h4>
+<table class="table table-sm"><thead><tr><th>Дата</th><th>Предмет</th><th>Оцінка</th></tr></thead><tbody>
+@foreach (var grade in Model.Grades.OrderByDescending(g => g.DateAssigned))
+{
+    <tr><td>@grade.DateAssigned.ToString("yyyy-MM-dd")</td><td>@grade.Subject?.Name</td><td>@grade.Value</td></tr>
+}
+</tbody></table>
+<a class="btn btn-secondary" asp-action="Index">Назад</a>
+</div></div>

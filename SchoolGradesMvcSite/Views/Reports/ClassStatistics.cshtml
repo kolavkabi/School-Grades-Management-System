@@ -1,0 +1,40 @@
+@model IEnumerable<ClassStatisticsViewModel>
+@{
+    ViewData["Title"] = "Статистика по класах";
+    var classes = ViewBag.Classes as IEnumerable<string> ?? Enumerable.Empty<string>();
+    string? currentClass = ViewBag.ClassName as string;
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Статистика по класах</h2>
+    <form method="get" class="d-flex gap-2">
+        <select name="className" class="form-select">
+            <option value="">Усі класи</option>
+            @foreach (var cls in classes)
+            {
+                if (currentClass == cls)
+                {
+                    <option value="@cls" selected>@cls</option>
+                }
+                else
+                {
+                    <option value="@cls">@cls</option>
+                }
+            }
+        </select>
+        <button class="btn btn-outline-primary">Фільтрувати</button>
+    </form>
+</div>
+<table class="table table-striped table-bordered">
+    <thead><tr><th>Клас</th><th>Кількість учнів</th><th>Кількість оцінок</th><th>Середній бал</th></tr></thead>
+    <tbody>
+    @foreach (var row in Model)
+    {
+        <tr>
+            <td>@row.ClassName</td>
+            <td>@row.StudentsCount</td>
+            <td>@row.GradesCount</td>
+            <td>@row.Average.ToString("0.00")</td>
+        </tr>
+    }
+    </tbody>
+</table>

@@ -1,0 +1,17 @@
+body {
+    background-color: #f8f9fa;
+}
+
+.stats-card {
+    border: 0;
+    border-radius: 1rem;
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.08);
+}
+
+.card {
+    border-radius: 1rem;
+}
+
+.table td, .table th {
+    vertical-align: middle;
+}

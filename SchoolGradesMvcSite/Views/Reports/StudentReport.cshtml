@@ -1,0 +1,33 @@
+@model StudentReportViewModel
+@{ ViewData["Title"] = "Звіт по учню"; }
+<div class="card shadow-sm">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
+            <div>
+                <h2>Звіт по учню: @Model.Student?.FullName</h2>
+                <p class="mb-1"><strong>Клас:</strong> @Model.Student?.ClassName</p>
+            </div>
+            @if (Model.Student is not null)
+            {
+                <a class="btn btn-success" asp-action="ExportStudentReportCsv" asp-route-studentId="@Model.Student.Id">Експорт табеля в CSV</a>
+            }
+        </div>
+        <div class="alert alert-info">Середній бал: <strong>@Model.Average.ToString("0.00")</strong></div>
+        <table class="table table-striped">
+            <thead><tr><th>Дата</th><th>Предмет</th><th>Вчитель</th><th>Оцінка</th><th>Коментар</th></tr></thead>
+            <tbody>
+            @foreach (var g in Model.Grades)
+            {
+                <tr>
+                    <td>@g.DateAssigned.ToString("yyyy-MM-dd")</td>
+                    <td>@g.Subject?.Name</td>
+                    <td>@g.Teacher?.FullName</td>
+                    <td>@g.Value</td>
+                    <td>@g.Comment</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+        <a class="btn btn-secondary" asp-action="Index">Назад</a>
+    </div>
+</div>

@@ -1,0 +1,102 @@
+@{
+    ViewData["Title"] = "Звіти та статистика";
+}
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h3>Звіт по учню</h3>
+                <form asp-action="StudentReport" method="get">
+                    <div class="mb-3">
+                        <label class="form-label">Учень</label>
+                        <select name="studentId" asp-items="ViewBag.Students" class="form-select"></select>
+                    </div>
+                    <button class="btn btn-primary" type="submit">Відкрити звіт</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h3>Рейтинг учнів</h3>
+                <form asp-action="Ranking" method="get">
+                    <div class="mb-3">
+                        <label class="form-label">Клас</label>
+                        <select name="className" class="form-select">
+                            <option value="">Усі класи</option>
+                            @foreach (string cls in ViewBag.Classes)
+                            {
+                                <option value="@cls">@cls</option>
+                            }
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" type="submit">Показати рейтинг</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h3>Статистика по класах</h3>
+                <form asp-action="ClassStatistics" method="get">
+                    <div class="mb-3">
+                        <label class="form-label">Клас</label>
+                        <select name="className" class="form-select">
+                            <option value="">Усі класи</option>
+                            @foreach (string cls in ViewBag.Classes)
+                            {
+                                <option value="@cls">@cls</option>
+                            }
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" type="submit">Показати статистику</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h3>Найкращий учень класу</h3>
+                <form asp-action="TopStudentInClass" method="get">
+                    <div class="mb-3">
+                        <label class="form-label">Клас</label>
+                        <select name="className" class="form-select">
+                            <option value="">Оберіть клас</option>
+                            @foreach (string cls in ViewBag.Classes)
+                            {
+                                <option value="@cls">@cls</option>
+                            }
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" type="submit">Показати найкращого учня</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h3>Експорт даних</h3>
+                <p>Експортувати журнал оцінок у CSV-файл.</p>
+                <a class="btn btn-success" asp-action="ExportGradesCsv">Скачати CSV</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card shadow-sm h-100 border-success">
+            <div class="card-body">
+                <h3>Командні feature-гілки</h3>
+                <ul class="mb-3">
+                    <li>Export Student Report to CSV</li>
+                    <li>Filter Students by Class</li>
+                    <li>View Top Student in Class</li>
+                    <li>Add Teacher Comment to Grade</li>
+                </ul>
+                <p class="text-muted mb-0">Деталі змін є у файлах <code>TEAM_BRANCH_PLAN.md</code> і <code>docs/SRS_UPDATE_v1.1.md</code>.</p>
+            </div>
+        </div>
+    </div>
+</div>

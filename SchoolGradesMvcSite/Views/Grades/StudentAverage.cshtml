@@ -1,0 +1,3 @@
+@model IEnumerable<Grade>
+@{ ViewData["Title"] = "Середній бал"; var student = ViewBag.Student as Student; }
+<div class="card shadow-sm"><div class="card-body"><h2>Середній бал: @student?.FullName</h2><p><strong>Клас:</strong> @student?.ClassName</p><div class="alert alert-info">Середній бал: <strong>@ViewBag.Average</strong></div><table class="table table-striped"><thead><tr><th>Дата</th><th>Предмет</th><th>Оцінка</th></tr></thead><tbody>@foreach (var g in Model){<tr><td>@g.DateAssigned.ToString("yyyy-MM-dd")</td><td>@g.Subject?.Name</td><td>@g.Value</td></tr>}</tbody></table><a class="btn btn-secondary" asp-controller="Students" asp-action="Index">Назад</a></div></div>

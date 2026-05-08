@@ -268,7 +268,7 @@ public class ReportsController : Controller
 
         var csvBytes = AddUtf8Bom(sb.ToString());
 
-        return File(csvBytes, "text/csv; charset=utf-8", "grades-report.csv");
+        return File(csvBytes, "text/csv", "grades-report.csv");
     }
 
     private static string Esc(string value)

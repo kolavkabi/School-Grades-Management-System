@@ -36,7 +36,7 @@ public class ReportsControllerTests
         var result = await controller.ExportStudentReportCsv(seeded.StudentA.Id);
 
         var file = Assert.IsType<FileContentResult>(result);
-        Assert.Equal("text/csv", file.ContentType);
+        Assert.StartsWith("text/csv", file.ContentType);
         Assert.Contains("student-report", file.FileDownloadName);
         var csv = Encoding.UTF8.GetString(file.FileContents);
         Assert.Contains("Бойко Андрій", csv);

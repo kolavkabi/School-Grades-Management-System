@@ -105,7 +105,7 @@ public class ReportsController : Controller
 
         var csvBytes = AddUtf8Bom(sb.ToString());
 
-        return File(csvBytes, "text/csv; charset=utf-8", fileName);
+        return File(csvBytes, "text/csv", fileName);
     }
 
     public async Task<IActionResult> TopStudentInClass(string className)
